@@ -240,6 +240,7 @@ class DataBase:
             if column_type in type_mapping:
                 # 使用映射的数据类型
                 column_type = type_mapping[column_type]
+            column_type = str(column_type)
             column_def = f"{column_name} {column_type}"
 
             # 如果是自增主键列，添加 AUTOINCREMENT
