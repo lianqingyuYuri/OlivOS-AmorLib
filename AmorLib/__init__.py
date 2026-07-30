@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 """
 @File      :    AmorLib/__init__.py
-@Author    :    LianQingYu恋倾雨
+@Author    :    lianqingyuYuri恋倾雨
 @Contact   :    None
 @License   :    AGPLv3
 @Copyright :    (C) 2026 AmorLib
