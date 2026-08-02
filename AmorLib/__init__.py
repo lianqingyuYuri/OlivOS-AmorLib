@@ -10,6 +10,7 @@
 
 STRING_ROW = list[str] | tuple[str, ...]
 
+from .cfg import IniConfig
 from .db import DataBase, execute
 from .msgRouter import UniqueRouter, FsmRouter, PriorityRouter
 from .msgCustomManager import MsgManager, init_msgCustom, has_NativeGUI
