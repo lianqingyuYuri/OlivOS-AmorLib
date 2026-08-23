@@ -59,3 +59,12 @@ class IniConfig:
         self, section: str, key: str, fallback: bool | None = None
     ) -> bool | None:
         return self.parser.getboolean(section, key, fallback=fallback)
+
+    def set(self, section: str, key: str, value):
+        if not self.parser.has_section(section):
+            self.parser.add_section(section)
+        self.parser.set(section, key, str(value))
+
+    def save(self):
+        with open(self.filename, "w", encoding=self.encoding) as f:
+            self.parser.write(f)
