@@ -215,7 +215,7 @@ class MsgManager:
     def msg_format(
         self,
         custom: str,
-        t_value: dict[str, str] = {},
+        t_value: dict = {},
         flagCross: bool = True,
         flagSplit: bool = False,
     ):
