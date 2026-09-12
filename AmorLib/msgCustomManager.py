@@ -218,7 +218,7 @@ class MsgManager:
         t_value: dict = {},
         flagCross: bool = True,
         flagSplit: bool = False,
-    ):
+    ) -> str:
         """格式化"""
         if custom in self.dictStrCustomDict:
             dictTValue = self.dictTValue
@@ -226,4 +226,4 @@ class MsgManager:
             return OlivaDiceCore.msgCustomManager.formatReplySTR(
                 self.dictStrCustomDict[custom], dictTValue, flagCross, flagSplit
             )
-        return
+        return custom
