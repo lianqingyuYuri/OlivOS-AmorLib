@@ -83,7 +83,7 @@ class MsgManager:
         self.at_list = []  # 被艾特的用户ID列表
         self.user_id = plugin_event.data.user_id  # 发送者ID
         self.platform = plugin_event.platform["platform"]  # 平台
-        self.group_id = None
+        self.group_id = None  # 群号ID
         # endregion 基本参数
         # region 初始化模板变量
         dictTValue = OlivaDiceCore.msgCustom.dictTValue.copy()
