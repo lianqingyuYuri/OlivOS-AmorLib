@@ -94,21 +94,21 @@ def initCustom(Plugin, Proc, templateName = 'default'):
 
 def loadCustomInto(Plugin, Proc):
     bot_info_dict = Proc.Proc_data["bot_info_dict"]
-    for bot_id in bot_info_dict:
+    for bot_hash in bot_info_dict:
         # 回复词
-        if bot_id not in OlivaDiceCore.msgCustom.dictStrCustomDict:
-            OlivaDiceCore.msgCustom.dictStrCustomDict[bot_id] = {}
-        for key, value in Plugin.custom.dictStrCustom[bot_id].items():
-            if key not in OlivaDiceCore.msgCustom.dictStrCustomDict[bot_id]:
-                OlivaDiceCore.msgCustom.dictStrCustomDict[bot_id][key] = value
+        if bot_hash not in OlivaDiceCore.msgCustom.dictStrCustomDict:
+            OlivaDiceCore.msgCustom.dictStrCustomDict[bot_hash] = {}
+        for key, value in Plugin.custom.dictStrCustom[bot_hash].items():
+            if key not in OlivaDiceCore.msgCustom.dictStrCustomDict[bot_hash]:
+                OlivaDiceCore.msgCustom.dictStrCustomDict[bot_hash][key] = value
         # 帮助文档
-        for key, value in Plugin.custom.dictHelpDoc[bot_id].items():
-            if key not in OlivaDiceCore.helpDocData.dictHelpDoc[bot_id]:
-                OlivaDiceCore.helpDocData.dictHelpDoc[bot_id][key] = value
+        for key, value in Plugin.custom.dictHelpDoc[bot_hash].items():
+            if key not in OlivaDiceCore.helpDocData.dictHelpDoc[bot_hash]:
+                OlivaDiceCore.helpDocData.dictHelpDoc[bot_hash][key] = value
         # 配置项
-        for key, value in Plugin.custom.dictConsoleSwitch[bot_id].items():
-            if key not in OlivaDiceCore.console.dictConsoleSwitch[bot_id]:
-                OlivaDiceCore.console.dictConsoleSwitch[bot_id][key] = value
+        for key, value in Plugin.custom.dictConsoleSwitch[bot_hash].items():
+            if key not in OlivaDiceCore.console.dictConsoleSwitch[bot_hash]:
+                OlivaDiceCore.console.dictConsoleSwitch[bot_hash][key] = value
     # 全局配置项和默认配置项
     for key, value in Plugin.custom.dictConsoleSwitch["unity"].items():
         if key not in OlivaDiceCore.console.dictConsoleSwitch["unity"]:
