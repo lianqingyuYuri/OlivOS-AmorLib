@@ -13,6 +13,6 @@ STRING_ROW = list[str] | tuple[str, ...]
 
 from .base import Registerable
 from .cfg import IniConfig
-from .custom import MsgManager, initCustom, loadCustomInto, releaseDir, has_NativeGUI
+from .custom import MsgManager, initCustom, readCustom, readCustomByBotHash, saveCustom, saveCustomByBotHash, loadCustomInto, releaseDir, has_NativeGUI
 from .db import DataBase, execute
 from .msgRouter import UniqueRouter, FsmRouter, PriorityRouter
