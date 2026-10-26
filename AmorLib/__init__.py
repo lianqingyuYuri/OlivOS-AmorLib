@@ -7,11 +7,12 @@
 @Copyright :    (C) 2026 AmorLib
 @Desc      :    None
 """
+__version__ = "2.0.0"
 
 STRING_ROW = list[str] | tuple[str, ...]
 
 from .base import Registerable
 from .cfg import IniConfig
+from .custom import MsgManager, loadCustomInto, releaseDir, has_NativeGUI
 from .db import DataBase, execute
 from .msgRouter import UniqueRouter, FsmRouter, PriorityRouter
-from .msgCustomManager import MsgManager, init_msgCustom, has_NativeGUI

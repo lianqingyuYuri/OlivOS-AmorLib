@@ -11,49 +11,123 @@
 import OlivOS  # type: ignore
 import OlivaDiceCore  # type: ignore
 
+import copy
+import os
+import json
+
 try:
     import OlivaDiceNativeGUI  # type: ignore
 
     has_NativeGUI = True
 except ImportError:
     has_NativeGUI = False
+import platform
+is_windows = platform.system() == 'Windows'
+
+def releaseDir(dir_path):
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
 
 
-def init_msgCustom(Plugin, Proc):
+
+def initCustom(Plugin, Proc, templateName = 'default'):
+    releaseDir(Plugin.data.dataDirRoot)
+    bot_info_dict = Proc.Proc_data["bot_info_dict"]
+    for bot_hash in bot_info_dict:
+        releaseDir(Plugin.data.dataDirRoot + '/' + bot_hash)
+        # 模板回复词载入
+        Plugin.custom.dictStrCustom[bot_hash] = {}
+        Plugin.custom.dictStrCustom[bot_hash] = copy.deepcopy(Plugin.custom.dictStrCustomTemplate[templateName])
+        # 模板帮助文档载入
+        Plugin.custom.dictHelpDoc[bot_hash] = {}
+        Plugin.custom.dictHelpDoc[bot_hash] = copy.deepcopy(Plugin.custom.dictHelpDocTemplate[templateName])
+        # 模板配置项载入
+        Plugin.custom.dictConsoleSwitch[bot_hash] = {}
+        Plugin.custom.dictConsoleSwitch[bot_hash] = copy.deepcopy(Plugin.custom.dictConsoleSwitchTemplate[templateName])
+        # 自定义回复词载入
+        customBotDir = Plugin.data.dataDirRoot + '/' + bot_hash
+        customReplyFile = 'customReply.json'
+        customReplyPath = customBotDir + '/' + customReplyFile
+        try:
+            with open(customReplyPath, 'r', encoding = 'utf-8') as customReplyPath_f:
+                Plugin.custom.dictStrCustomUpdate[bot_hash] = json.loads(customReplyPath_f.read())
+                Plugin.custom.dictStrCustom[bot_hash].update(
+                    Plugin.custom.dictStrCustomUpdate[bot_hash]
+                )
+        except:
+            pass
+        # 自定义help文档载入
+        helpDocDefaultFile = 'helpdocDefault.json'
+        helpDocDefaultPath = customBotDir + '/' + helpDocDefaultFile
+        try:
+            with open(helpDocDefaultPath, 'r', encoding = 'utf-8') as helpDocDefaultPath_f:
+                helpDoc_this = json.loads(helpDocDefaultPath_f.read())
+                Plugin.custom.dicthelpDocDefault[bot_hash].update(helpDoc_this)
+                Plugin.custom.dictHelpDoc[bot_hash].update(
+                    Plugin.custom.dicthelpDocDefault[bot_hash]
+                )
+        except:
+            pass
+        # 自定义配置项载入
+        switchFile = 'switch.json'
+        switchPath = customBotDir + '/' + switchFile
+        try:
+            with open(switchPath, 'r', encoding = 'utf-8') as switchPath_f:
+                switch_this = json.loads(switchPath_f.read())
+                Plugin.custom.dictConsoleSwitch[bot_hash].update(switch_this)
+        except:
+            pass
+    # 全局配置项模板载入
+    if 'unity' not in Plugin.custom.dictConsoleSwitchTemplate:
+        Plugin.custom.dictConsoleSwitchTemplate["unity"] = {}
+        Plugin.custom.dictConsoleSwitchTemplate["unity"] = copy.deepcopy(Plugin.custom.dictConsoleSwitchTemplate[templateName])
+    Plugin.custom.dictConsoleSwitch["unity"] = copy.deepcopy(Plugin.custom.dictConsoleSwitchTemplate["unity"])
+
+
+
+
+
+
+
+
+
+
+def loadCustomInto(Plugin, Proc):
     bot_info_dict = Proc.Proc_data["bot_info_dict"]
     for bot_id in bot_info_dict:
         # 回复词
         if bot_id not in OlivaDiceCore.msgCustom.dictStrCustomDict:
             OlivaDiceCore.msgCustom.dictStrCustomDict[bot_id] = {}
-        for key, value in Plugin.msgCustom.dictStrCustom.items():
+        for key, value in Plugin.custom.dictStrCustom[bot_id].items():
             if key not in OlivaDiceCore.msgCustom.dictStrCustomDict[bot_id]:
                 OlivaDiceCore.msgCustom.dictStrCustomDict[bot_id][key] = value
         # 帮助文档
-        for key, value in Plugin.msgCustom.dictHelpDoc.items():
+        for key, value in Plugin.custom.dictHelpDoc[bot_id].items():
             if key not in OlivaDiceCore.helpDocData.dictHelpDoc[bot_id]:
                 OlivaDiceCore.helpDocData.dictHelpDoc[bot_id][key] = value
         # 配置项
-        for key, value in Plugin.msgCustom.dictConsoleSwitch.items():
+        for key, value in Plugin.custom.dictConsoleSwitch[bot_id].items():
             if key not in OlivaDiceCore.console.dictConsoleSwitch[bot_id]:
                 OlivaDiceCore.console.dictConsoleSwitch[bot_id][key] = value
     # 全局配置项和默认配置项
-    for key, value in Plugin.msgCustom.dictConsoleSwitch.items():
+    for key, value in Plugin.custom.dictConsoleSwitch["unity"].items():
         if key not in OlivaDiceCore.console.dictConsoleSwitch["unity"]:
             OlivaDiceCore.console.dictConsoleSwitch["unity"][key] = value
+    for key, value in Plugin.custom.dictConsoleSwitchTemplate["default"].items():
         if key not in OlivaDiceCore.console.dictConsoleSwitchTemplate["default"]:
             OlivaDiceCore.console.dictConsoleSwitchTemplate["default"][key] = value
     if has_NativeGUI:
         # 回复词说明
-        for key, value in Plugin.msgCustom.dictStrCustomNote.items():
+        for key, value in Plugin.custom.dictStrCustomNote.items():
             if key not in OlivaDiceNativeGUI.msgCustom.dictStrCustomNote:
                 OlivaDiceNativeGUI.msgCustom.dictStrCustomNote[key] = value
         # 配置项说明
-        for key, value in Plugin.msgCustom.dictConsoleSwitchNote.items():
+        for key, value in Plugin.custom.dictConsoleSwitchNote.items():
             if key not in OlivaDiceNativeGUI.msgCustom.dictConsoleSwitchNote:
                 OlivaDiceNativeGUI.msgCustom.dictConsoleSwitchNote[key] = value
-    OlivaDiceCore.msgCustom.dictStrConst.update(Plugin.msgCustom.dictStrConst)
-    OlivaDiceCore.msgCustom.dictGValue.update(Plugin.msgCustom.dictGValue)
-    OlivaDiceCore.msgCustom.dictTValue.update(Plugin.msgCustom.dictTValue)
+    OlivaDiceCore.msgCustom.dictStrConst.update(Plugin.custom.dictStrConst)
+    OlivaDiceCore.msgCustom.dictGValue.update(Plugin.custom.dictGValue)
+    OlivaDiceCore.msgCustom.dictTValue.update(Plugin.custom.dictTValue)
 
 
 class MsgManager:
