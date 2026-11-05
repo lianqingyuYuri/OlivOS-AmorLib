@@ -54,8 +54,9 @@ class UniqueRouter:
 
 
 class SearchMode(Enum):
-    ANY = "any"  # 任一满足
-    EXACT = "exact"  # 一致性
+    ANY = "any"  # 交集
+    CONTAINS = "contains"  # 包含
+    EXACT = "exact"  # 完全一致
     ALL = "all"  # 全部满足
 
 
@@ -100,17 +101,21 @@ class FsmRouter:
                 target_rules.update(self._states[state])
         for rule_id in target_rules:
             rule = self._forward[rule_id]
-            match_state = False
+            match_state = None
             if search_mode == SearchMode.ANY:
-                # 任一状态匹配：规则状态与当前状态有交集
+                # 交集：规则状态与当前状态有交集
                 match_state = bool(rule["states"] & state_row)
+            elif search_mode == SearchMode.CONTAINS:
+                # 包含：规则状态是当前状态的子集
+                match_state = rule["states"].issubset(state_row)
             elif search_mode == SearchMode.EXACT:
                 # 完全匹配：规则状态与当前状态完全一致
                 match_state = rule["states"] == state_row
             elif search_mode == SearchMode.ALL:
-                # 全部匹配：规则包含所有当前状态
+                # 全部满足：当前状态是规则状态的子集
                 match_state = state_row.issubset(rule["states"])
-            if match_state:
+
+            if match_state is not None:
                 result = re.search(rule["pattern"], msg)
                 if result:
                     forward.append((rule["handler"], result.groups()))
