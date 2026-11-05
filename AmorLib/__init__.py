@@ -26,4 +26,4 @@ from .custom import (
     has_NativeGUI,
 )
 from .db import DataBase, execute
-from .msgRouter import UniqueRouter, FsmRouter, PriorityRouter
+from .router import UniqueRouter, FsmRouter, PriorityRouter
