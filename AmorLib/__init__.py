@@ -11,6 +11,9 @@
 __version__ = "2.0.0"
 
 STRING_ROW = list[str] | tuple[str, ...]
+import platform
+
+is_windows = platform.system() == "Windows"
 
 from .base import Registerable
 from .cfg import IniConfig

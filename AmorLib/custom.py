@@ -21,59 +21,67 @@ try:
     has_NativeGUI = True
 except ImportError:
     has_NativeGUI = False
-import platform
-is_windows = platform.system() == 'Windows'
+
 
 def releaseDir(dir_path):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
 
-
-def initCustom(Plugin, Proc, templateName = 'default'):
+def initCustom(Plugin, Proc, templateName="default"):
     releaseDir(Plugin.data.dataDirRoot)
     # 全局配置项模板载入
-    if 'unity' not in Plugin.custom.dictConsoleSwitchTemplate:
+    if "unity" not in Plugin.custom.dictConsoleSwitchTemplate:
         Plugin.custom.dictConsoleSwitchTemplate["unity"] = {}
-        Plugin.custom.dictConsoleSwitchTemplate["unity"] = copy.deepcopy(Plugin.custom.dictConsoleSwitchTemplate[templateName])
-    bot_info_dict = list(Proc.Proc_data["bot_info_dict"]) + ['unity']
+        Plugin.custom.dictConsoleSwitchTemplate["unity"] = copy.deepcopy(
+            Plugin.custom.dictConsoleSwitchTemplate[templateName]
+        )
+    bot_info_dict = list(Proc.Proc_data["bot_info_dict"]) + ["unity"]
     for bot_hash in bot_info_dict:
-        releaseDir(Plugin.data.dataDirRoot + '/' + bot_hash)
+        releaseDir(Plugin.data.dataDirRoot + "/" + bot_hash)
         # 模板回复词载入
         Plugin.custom.dictStrCustom[bot_hash] = {}
-        Plugin.custom.dictStrCustom[bot_hash] = copy.deepcopy(Plugin.custom.dictStrCustomTemplate[templateName])
+        Plugin.custom.dictStrCustom[bot_hash] = copy.deepcopy(
+            Plugin.custom.dictStrCustomTemplate[templateName]
+        )
         # 模板帮助文档载入
         Plugin.custom.dictHelpDoc[bot_hash] = {}
-        Plugin.custom.dictHelpDoc[bot_hash] = copy.deepcopy(Plugin.custom.dictHelpDocTemplate[templateName])
+        Plugin.custom.dictHelpDoc[bot_hash] = copy.deepcopy(
+            Plugin.custom.dictHelpDocTemplate[templateName]
+        )
         # 模板配置项载入
         Plugin.custom.dictConsoleSwitch[bot_hash] = {}
-        Plugin.custom.dictConsoleSwitch[bot_hash] = copy.deepcopy(Plugin.custom.dictConsoleSwitchTemplate[templateName])
+        Plugin.custom.dictConsoleSwitch[bot_hash] = copy.deepcopy(
+            Plugin.custom.dictConsoleSwitchTemplate[templateName]
+        )
         # 自定义回复词载入
-        customBotDir = Plugin.data.dataDirRoot + '/' + bot_hash
-        customReplyFile = 'customReply.json'
-        customReplyPath = customBotDir + '/' + customReplyFile
+        customBotDir = Plugin.data.dataDirRoot + "/" + bot_hash
+        customReplyFile = "customReply.json"
+        customReplyPath = customBotDir + "/" + customReplyFile
         try:
-            with open(customReplyPath, 'r', encoding = 'utf-8') as customReplyPath_f:
-                Plugin.custom.dictStrCustomUpdate[bot_hash] = json.loads(customReplyPath_f.read())
+            with open(customReplyPath, "r", encoding="utf-8") as customReplyPath_f:
+                Plugin.custom.dictStrCustomUpdate[bot_hash] = json.loads(
+                    customReplyPath_f.read()
+                )
                 Plugin.custom.dictStrCustom[bot_hash].update(
                     Plugin.custom.dictStrCustomUpdate[bot_hash]
                 )
         except:
             pass
         # 本地help文档载入
-        helpDocFile = 'helpdoc.json'
-        helpDocPath = customBotDir + '/' + helpDocFile
+        helpDocFile = "helpdoc.json"
+        helpDocPath = customBotDir + "/" + helpDocFile
         try:
-            with open(helpDocPath, 'r', encoding = 'utf-8') as helpDocPath_f:
+            with open(helpDocPath, "r", encoding="utf-8") as helpDocPath_f:
                 helpDoc_this = json.loads(helpDocPath_f.read())
                 Plugin.custom.dictHelpDoc[bot_hash].update(helpDoc_this)
         except:
             pass
         # 本地配置项载入
-        switchFile = 'switch.json'
-        switchPath = customBotDir + '/' + switchFile
+        switchFile = "switch.json"
+        switchPath = customBotDir + "/" + switchFile
         try:
-            with open(switchPath, 'r', encoding = 'utf-8') as switchPath_f:
+            with open(switchPath, "r", encoding="utf-8") as switchPath_f:
                 switch_this = json.loads(switchPath_f.read())
                 Plugin.custom.dictConsoleSwitch[bot_hash].update(switch_this)
         except:
@@ -81,70 +89,88 @@ def initCustom(Plugin, Proc, templateName = 'default'):
 
 
 def readCustom(Plugin, Proc):
-    bot_info_dict = list(Proc.Proc_data["bot_info_dict"]) + ['unity']
+    bot_info_dict = list(Proc.Proc_data["bot_info_dict"]) + ["unity"]
     for bot_hash in bot_info_dict:
         readCustomByBotHash(Plugin, bot_hash)
 
+
 def readCustomByBotHash(Plugin, bot_hash):
-    releaseDir(Plugin.data.dataDirRoot + '/' + bot_hash)
-    customBotDir = Plugin.data.dataDirRoot + '/' + bot_hash
+    releaseDir(Plugin.data.dataDirRoot + "/" + bot_hash)
+    customBotDir = Plugin.data.dataDirRoot + "/" + bot_hash
     # 自定义回复词载入
-    customReplyFile = 'customReply.json'
-    customReplyPath = customBotDir + '/' + customReplyFile
+    customReplyFile = "customReply.json"
+    customReplyPath = customBotDir + "/" + customReplyFile
     try:
-        with open(customReplyPath, 'r', encoding = 'utf-8') as customReplyPath_f:
-            Plugin.custom.dictStrCustomUpdate[bot_hash].update(json.loads(customReplyPath_f.read()))
+        with open(customReplyPath, "r", encoding="utf-8") as customReplyPath_f:
+            Plugin.custom.dictStrCustomUpdate[bot_hash].update(
+                json.loads(customReplyPath_f.read())
+            )
     except:
         pass
     # 本地help文档载入
-    helpDocFile = 'helpdoc.json'
-    helpDocPath = customBotDir + '/' + helpDocFile
+    helpDocFile = "helpdoc.json"
+    helpDocPath = customBotDir + "/" + helpDocFile
     try:
-        with open(helpDocPath, 'r', encoding = 'utf-8') as helpDocPath_f:
+        with open(helpDocPath, "r", encoding="utf-8") as helpDocPath_f:
             helpDoc_this = json.loads(helpDocPath_f.read())
             Plugin.custom.dictHelpDoc[bot_hash].update(helpDoc_this)
     except:
         pass
     # 本地配置项载入
-    switchFile = 'switch.json'
-    switchPath = customBotDir + '/' + switchFile
+    switchFile = "switch.json"
+    switchPath = customBotDir + "/" + switchFile
     try:
-        with open(switchPath, 'r', encoding = 'utf-8') as switchPath_f:
+        with open(switchPath, "r", encoding="utf-8") as switchPath_f:
             switch_this = json.loads(switchPath_f.read())
             Plugin.custom.dictConsoleSwitch[bot_hash].update(switch_this)
     except:
         pass
 
+
 def saveCustom(Plugin, Proc):
-    bot_info_dict = list(Proc.Proc_data["bot_info_dict"]) + ['unity']
+    bot_info_dict = list(Proc.Proc_data["bot_info_dict"]) + ["unity"]
     for bot_hash in bot_info_dict:
         saveCustomByBotHash(Plugin, bot_hash)
 
+
 def saveCustomByBotHash(Plugin, bot_hash):
-    releaseDir(Plugin.data.dataDirRoot + '/' + bot_hash)
-    customBotDir = Plugin.data.dataDirRoot + '/' + bot_hash
+    releaseDir(Plugin.data.dataDirRoot + "/" + bot_hash)
+    customBotDir = Plugin.data.dataDirRoot + "/" + bot_hash
     # 自定义回复词保存
-    customReplyFile = 'customReply.json'
-    customReplyPath = customBotDir + '/' + customReplyFile
+    customReplyFile = "customReply.json"
+    customReplyPath = customBotDir + "/" + customReplyFile
     if bot_hash not in Plugin.custom.dictStrCustomUpdate:
         Plugin.custom.dictStrCustomUpdate[bot_hash] = {}
-    with open(customReplyPath, 'w', encoding = 'utf-8') as customReplyPath_f:
-        customReplyPath_f.write(json.dumps(Plugin.custom.dictStrCustomUpdate[bot_hash], ensure_ascii = False, indent = 4))
+    with open(customReplyPath, "w", encoding="utf-8") as customReplyPath_f:
+        customReplyPath_f.write(
+            json.dumps(
+                Plugin.custom.dictStrCustomUpdate[bot_hash],
+                ensure_ascii=False,
+                indent=4,
+            )
+        )
     # 本地help文档保存
-    helpDocFile = 'helpdoc.json'
-    helpDocPath = customBotDir + '/' + helpDocFile
+    helpDocFile = "helpdoc.json"
+    helpDocPath = customBotDir + "/" + helpDocFile
     if bot_hash not in Plugin.custom.dictHelpDoc:
         Plugin.custom.dictHelpDoc[bot_hash] = {}
-    with open(helpDocPath, 'w', encoding = 'utf-8') as helpDocPath_f:
-        helpDocPath_f.write(json.dumps(Plugin.custom.dictHelpDoc[bot_hash], ensure_ascii = False, indent = 4))
+    with open(helpDocPath, "w", encoding="utf-8") as helpDocPath_f:
+        helpDocPath_f.write(
+            json.dumps(
+                Plugin.custom.dictHelpDoc[bot_hash], ensure_ascii=False, indent=4
+            )
+        )
     # 本地配置项保存
-    switchFile = 'switch.json'
-    switchPath = customBotDir + '/' + switchFile
+    switchFile = "switch.json"
+    switchPath = customBotDir + "/" + switchFile
     if bot_hash not in Plugin.custom.dictConsoleSwitch:
         Plugin.custom.dictConsoleSwitch[bot_hash] = {}
-    with open(switchPath, 'w', encoding = 'utf-8') as switchPath_f:
-        switchPath_f.write(json.dumps(Plugin.custom.dictConsoleSwitch[bot_hash], ensure_ascii = False, indent = 4))
-
+    with open(switchPath, "w", encoding="utf-8") as switchPath_f:
+        switchPath_f.write(
+            json.dumps(
+                Plugin.custom.dictConsoleSwitch[bot_hash], ensure_ascii=False, indent=4
+            )
+        )
 
 
 def loadCustomInto(Plugin, Proc):
