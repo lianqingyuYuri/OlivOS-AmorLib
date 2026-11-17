@@ -29,7 +29,7 @@ def releaseDir(dir_path):
 
 
 def initCustom(Plugin, Proc, templateName="default"):
-    releaseDir(Plugin.console.dataDirRoot)
+    releaseDir(Plugin.config.dataDirRoot)
     # 全局配置项模板载入
     if "unity" not in Plugin.custom.dictConsoleSwitchTemplate:
         Plugin.custom.dictConsoleSwitchTemplate["unity"] = {}
@@ -38,7 +38,7 @@ def initCustom(Plugin, Proc, templateName="default"):
         )
     bot_info_dict = list(Proc.Proc_data["bot_info_dict"]) + ["unity"]
     for bot_hash in bot_info_dict:
-        releaseDir(Plugin.console.dataDirRoot + "/" + bot_hash)
+        releaseDir(Plugin.config.dataDirRoot + "/" + bot_hash)
         # 模板回复词载入
         Plugin.custom.dictStrCustom[bot_hash] = {}
         Plugin.custom.dictStrCustom[bot_hash] = copy.deepcopy(
@@ -55,7 +55,7 @@ def initCustom(Plugin, Proc, templateName="default"):
             Plugin.custom.dictConsoleSwitchTemplate[templateName]
         )
         # 自定义回复词载入
-        customBotDir = Plugin.console.dataDirRoot + "/" + bot_hash
+        customBotDir = Plugin.config.dataDirRoot + "/" + bot_hash
         customReplyFile = "customReply.json"
         customReplyPath = customBotDir + "/" + customReplyFile
         try:
@@ -95,8 +95,8 @@ def readCustom(Plugin, Proc):
 
 
 def readCustomByBotHash(Plugin, bot_hash):
-    releaseDir(Plugin.console.dataDirRoot + "/" + bot_hash)
-    customBotDir = Plugin.console.dataDirRoot + "/" + bot_hash
+    releaseDir(Plugin.config.dataDirRoot + "/" + bot_hash)
+    customBotDir = Plugin.config.dataDirRoot + "/" + bot_hash
     # 自定义回复词载入
     customReplyFile = "customReply.json"
     customReplyPath = customBotDir + "/" + customReplyFile
@@ -134,8 +134,8 @@ def saveCustom(Plugin, Proc):
 
 
 def saveCustomByBotHash(Plugin, bot_hash):
-    releaseDir(Plugin.console.dataDirRoot + "/" + bot_hash)
-    customBotDir = Plugin.console.dataDirRoot + "/" + bot_hash
+    releaseDir(Plugin.config.dataDirRoot + "/" + bot_hash)
+    customBotDir = Plugin.config.dataDirRoot + "/" + bot_hash
     # 自定义回复词保存
     customReplyFile = "customReply.json"
     customReplyPath = customBotDir + "/" + customReplyFile
