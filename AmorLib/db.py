@@ -9,7 +9,8 @@
 """
 
 import sqlite3
-from typing import Any, Union, Type
+from typing import Any
+
 from . import STRING_ROW
 
 DB_PATH = "plugin/data/AmorLib.db"
@@ -83,7 +84,7 @@ class DataBase:
             list[sqlite3.Row] | None: 查询到的数据
         """
         assert self.cursor is not None
-        sql = f"SELECT {rows if type(rows)== str else ', '.join(rows) if rows else '*'} FROM {table}"
+        sql = f"SELECT {rows if type(rows) == str else ', '.join(rows) if rows else '*'} FROM {table}"
         if where:
             sql += f" WHERE {where}"
         if order and isinstance(order, str) and order.strip():
@@ -135,7 +136,7 @@ class DataBase:
         assert self.cursor is not None
         inc_cols = set(increment) if increment else set()
         set_clause_parts = []
-        for col_name in data.keys():
+        for col_name in data:
             if col_name in inc_cols:
                 set_clause_parts.append(f"{col_name} = {col_name} + ?")
             else:
@@ -198,12 +199,10 @@ class DataBase:
     def create(
         self,
         table: str,
-        columns: dict[str, Union[Type[int], Type[float], Type[str], Type[dict], str]],
+        columns: dict[str, type[int] | type[float] | type[str] | type[dict] | str],
         primary_key: str | STRING_ROW | None = None,
         foreign_keys: dict[str, dict[str, str]] | None = None,
-        unique_constraints: (
-            STRING_ROW | list[STRING_ROW] | tuple[STRING_ROW, ...] | None
-        ) = None,
+        unique_constraints: (STRING_ROW | list[STRING_ROW] | tuple[STRING_ROW, ...] | None) = None,
         auto_increment: bool = False,
     ) -> None:
         """创建表
@@ -233,7 +232,7 @@ class DataBase:
         }
         column_defs = []
         for column_name, column_type in columns.items():
-            if column_type not in type_mapping.keys() and type(column_type) != str:
+            if column_type not in type_mapping and type(column_type) != str:
                 raise RuntimeError(
                     f"[CREATE]创建表失败: columns类型定义错误, 仅允许<class 'int'>、<class 'float'>、 <class 'str'>、 <class 'dict'>、 str类型| key: '{column_name}' is {column_type}"
                 ) from None
@@ -267,18 +266,14 @@ class DataBase:
         # 添加外键约束
         if foreign_keys:
             for column_name, ref in foreign_keys.items():
-                ref_table = list(ref.keys())[0]
-                column_defs.append(
-                    f"FOREIGN KEY ({column_name}) REFERENCES {ref_table}({ref[ref_table]})"
-                )
+                ref_table = next(iter(ref.keys()))
+                column_defs.append(f"FOREIGN KEY ({column_name}) REFERENCES {ref_table}({ref[ref_table]})")
 
         # 添加唯一约束
         if unique_constraints:
             for constraint in unique_constraints:
                 if type(constraint) != str:
-                    column_defs.append(
-                        f"UNIQUE ({', '.join(constraint)})"
-                    )  # 复合唯一约束
+                    column_defs.append(f"UNIQUE ({', '.join(constraint)})")  # 复合唯一约束
                 else:
                     column_defs.append(f"UNIQUE ({constraint})")  # 单列唯一约束
         # endregion
@@ -300,9 +295,7 @@ class DataBase:
         try:
             # region get schema
             # 检查表是否存在
-            self.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,)
-            )
+            self.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,))
             if not self.cursor.fetchone():
                 return None
 

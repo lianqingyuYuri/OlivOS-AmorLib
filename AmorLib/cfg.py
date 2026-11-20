@@ -9,7 +9,7 @@
 """
 
 import configparser
-from typing import TypeVar, Union
+from typing import TypeVar
 
 T = TypeVar("T")
 
@@ -29,7 +29,7 @@ class IniConfig:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def get(self, section: str, key: str, fallback: T = None) -> Union[str, T]:
+    def get(self, section: str, key: str, fallback: T = None) -> str | T:
         """
         获取指定配置项的值。
         :param section: 节名
@@ -50,14 +50,10 @@ class IniConfig:
     def getint(self, section: str, key: str, fallback: int | None = None) -> int | None:
         return self.parser.getint(section, key, fallback=fallback)
 
-    def getfloat(
-        self, section: str, key: str, fallback: float | None = None
-    ) -> float | None:
+    def getfloat(self, section: str, key: str, fallback: float | None = None) -> float | None:
         return self.parser.getfloat(section, key, fallback=fallback)
 
-    def getboolean(
-        self, section: str, key: str, fallback: bool | None = None
-    ) -> bool | None:
+    def getboolean(self, section: str, key: str, fallback: bool | None = None) -> bool | None:
         return self.parser.getboolean(section, key, fallback=fallback)
 
     def set(self, section: str, key: str, value):
