@@ -12,7 +12,7 @@ import OlivaDiceCore  # type: ignore
 import OlivOS  # type: ignore
 
 
-class MsgManager:
+class MsgEvent:
     def __init__(self, plugin_event):
         force_reply = False  # 是否强制回复
         # region 基本参数

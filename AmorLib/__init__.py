@@ -29,5 +29,5 @@ from .custom import (
 )
 from .db import DataBase, execute
 from .filter import Entry, HandlerFilter, Registry
-from .msg import MsgManager
+from .msg import MsgEvent
 from .router import FsmRouter, PriorityRouter, UniqueRouter
