@@ -9,7 +9,7 @@
 """
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable
+from collections.abc import Hashable
 from dataclasses import dataclass, field
 from typing import Generic, TypeVar
 
@@ -26,33 +26,33 @@ class HandlerFilter(ABC, Generic[EventT]):
 
 @dataclass
 class Entry(Generic[EventT]):
-    """一条记录：处理函数 + 过滤器链。"""
+    """一条记录：处理键 + 过滤器链。键可为函数/类/字符串等任意可哈希对象。"""
 
-    func: Callable
+    key: Hashable
     filters: list[HandlerFilter[EventT]] = field(default_factory=list)
 
     @property
     def name(self) -> str:
-        return self.func.__name__
+        return getattr(self.key, "__name__", str(self.key))
 
 
 class Registry(Generic[EventT]):
-    """通用注册器：以函数对象为键，为任意事件类型挂载过滤器链。"""
+    """通用注册器：以任意可哈希对象为键，为任意事件类型挂载过滤器链。"""
 
     def __init__(self) -> None:
-        self._entries: dict[Callable, Entry[EventT]] = {}
+        self._entries: dict[Hashable, Entry[EventT]] = {}
 
-    def get_or_create(self, func: Callable) -> Entry[EventT]:
+    def get_or_create(self, key: Hashable) -> Entry[EventT]:
         """获取或创建条目"""
-        entry = self._entries.get(func)
+        entry = self._entries.get(key)
         if entry is None:
-            entry = Entry(func=func)
-            self._entries[func] = entry
+            entry = Entry(key=key)
+            self._entries[key] = entry
         return entry
 
-    def attach(self, func: Callable, flt: HandlerFilter[EventT]) -> Entry[EventT]:
+    def attach(self, key: Hashable, flt: HandlerFilter[EventT]) -> Entry[EventT]:
         """登记一个过滤器"""
-        entry = self.get_or_create(func)
+        entry = self.get_or_create(key)
         if flt not in entry.filters:
             entry.filters.append(flt)
         return entry
